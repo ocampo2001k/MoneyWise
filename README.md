@@ -1,3 +1,54 @@
+## MoneyWise
+
+Personal finance tracker built with Next.js (App Router), TypeScript, and Prisma/SQLite.
+
+### Features
+- Transactions: add, edit, delete income/expense
+- Categories: CRUD with type (INCOME | EXPENSE)
+- Filters: by category, type, date range
+- Summaries: income, expenses, balance
+- Design system: brand tokens, dark mode, reusable classes
+
+### Tech
+- Next.js 15 (App Router) + React 19
+- Prisma 6 + SQLite
+- TypeScript, ESLint
+
+### Getting started
+1) Install deps
+```bash
+npm ci
+```
+2) Configure env (SQLite)
+```bash
+echo DATABASE_URL="file:./dev.db" > prisma/.env
+```
+3) Migrate & seed
+```bash
+npx prisma migrate dev --name init
+npm run prisma:seed
+```
+4) Dev server
+```bash
+npm run dev
+```
+
+### Useful scripts
+- `npm run dev` – start dev server
+- `npm run build` – production build
+- `npm run start` – start production server
+- `npm run prisma:seed` – seed default categories
+- `npx prisma studio` – inspect the DB
+
+### API
+- `GET/POST /api/transactions`
+- `GET/PUT/DELETE /api/transactions/[id]`
+- `GET/POST /api/categories`
+- `PUT/DELETE /api/categories/[id]`
+
+### Design system
+Tokens defined in `src/app/globals.css` (colors, radius, shadow, typography). Utility classes: `btn`, `input`, `card`, `table`.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
