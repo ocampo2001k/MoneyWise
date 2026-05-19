@@ -34,6 +34,7 @@ export default function RootLayout({
             <nav className="space-y-2 text-sm">
               <a className="block btn btn-secondary !w-full" href="/">Home</a>
               <a className="block btn btn-secondary !w-full" href="/transactions">Transactions</a>
+              <a className="block btn btn-secondary !w-full" href="/analytics">Analytics</a>
               <a className="block btn btn-secondary !w-full" href="/categories">Categories</a>
             </nav>
           </aside>

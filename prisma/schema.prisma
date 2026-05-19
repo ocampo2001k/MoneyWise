@@ -15,6 +15,7 @@ model Transaction {
   type         TransactionType
   date         DateTime
   note         String?
+  externalId   String?           @unique
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 }
