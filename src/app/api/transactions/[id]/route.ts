@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { TransactionUpdateSchema, formatZodError } from '@/lib/schemas'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -34,34 +35,34 @@ export async function PUT(request: Request, { params }: Params) {
   if (!Number.isInteger(id)) {
     return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
   }
-  try {
-    const body = await request.json()
-    const { amountCents, categoryId, type, date, note } = body ?? {}
-    if (
-      (amountCents !== undefined && (!Number.isInteger(amountCents) || amountCents < 0)) ||
-      (categoryId !== undefined && !Number.isInteger(categoryId)) ||
-      (type !== undefined && type !== 'INCOME' && type !== 'EXPENSE') ||
-      (date !== undefined && typeof date !== 'string') ||
-      (note !== undefined && note !== null && typeof note !== 'string')
-    ) {
-      return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
-    }
 
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+  }
+
+  const parsed = TransactionUpdateSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json(formatZodError(parsed.error), { status: 400 })
+  }
+
+  try {
     const updated = await prisma.transaction.update({
       where: { id },
       data: {
-        amountCents: amountCents ?? undefined,
-        categoryId: categoryId ?? undefined,
-        type: type ?? undefined,
-        date: date ? new Date(date) : undefined,
-        note: typeof note === 'string' ? note : note === null ? null : undefined,
+        amountCents: parsed.data.amountCents,
+        categoryId: parsed.data.categoryId,
+        type: parsed.data.type,
+        date: parsed.data.date,
+        note: parsed.data.note,
+        externalId: parsed.data.externalId,
       },
       include: { category: true },
     })
     return NextResponse.json(updated)
   } catch {
-    return NextResponse.json({ error: 'Bad request' }, { status: 400 })
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 }
-
-
