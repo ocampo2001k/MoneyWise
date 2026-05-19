@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { formatCurrencyCents } from '@/lib/format'
 import AnalyticsFilters from '@/app/analytics/ui/AnalyticsFilters'
 import DonutChart from '@/app/analytics/ui/DonutChart'
@@ -11,7 +12,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
   const from = typeof sp?.from === 'string' && sp.from ? new Date(sp.from) : undefined
   const to = typeof sp?.to === 'string' && sp.to ? new Date(sp.to) : undefined
 
-  const where: any = {}
+  const where: Prisma.TransactionWhereInput = {}
   if (typeFilter && typeFilter !== 'ALL') where.type = typeFilter
   if (from || to) {
     where.date = {}
@@ -19,7 +20,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
     if (to) where.date.lte = to
   }
 
-  const transactions = await (prisma.transaction as any).findMany({
+  const transactions = await prisma.transaction.findMany({
     where,
     include: { category: true },
   })

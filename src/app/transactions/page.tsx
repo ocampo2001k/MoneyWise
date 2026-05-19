@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
-import { formatCurrencyCents, formatDateYYYYMMDD } from '@/lib/format'
+import { Prisma } from '@prisma/client'
+import { formatCurrencyCents } from '@/lib/format'
 import NewTransactionForm from '@/app/transactions/ui/NewTransactionForm'
 import TransactionsFilters from './ui/TransactionsFilters'
 import TransactionsTable from './ui/TransactionsTable'
@@ -17,7 +18,7 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
   const from = typeof sp?.from === 'string' ? new Date(sp.from) : undefined
   const to = typeof sp?.to === 'string' ? new Date(sp.to) : undefined
 
-  const where: any = {}
+  const where: Prisma.TransactionWhereInput = {}
   if (categoryIdParam) where.categoryId = Number(categoryIdParam)
   if (type) where.type = type
   if (from || to) {
@@ -26,14 +27,14 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
     if (to) where.date.lte = to
   }
 
-  const transactions = await (prisma.transaction as any).findMany({
+  const transactions = await prisma.transaction.findMany({
     where,
     orderBy: { date: 'desc' },
     include: { category: true },
   })
 
-  const totals = (transactions as Array<any>).reduce(
-    (acc: { income: number; expense: number; net: number }, t: any) => {
+  const totals = transactions.reduce(
+    (acc, t) => {
       if (t.type === 'INCOME') acc.income += t.amountCents
       else acc.expense += t.amountCents
       acc.net = acc.income - acc.expense

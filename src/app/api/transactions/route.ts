@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function GET() {
-  const transactions = await (prisma.transaction as any).findMany({
+  const transactions = await prisma.transaction.findMany({
     orderBy: { date: 'desc' },
     include: { category: true },
   })
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
     }
 
-    const created = await (prisma.transaction as any).create({
+    const created = await prisma.transaction.create({
       data: {
         amountCents,
         categoryId,

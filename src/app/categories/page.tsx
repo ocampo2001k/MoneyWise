@@ -3,7 +3,7 @@ import CategoryForm from '@/app/categories/ui/CategoryForm'
 import CategoriesTable from '@/app/categories/ui/CategoriesTable'
 
 export default async function CategoriesPage() {
-  const categories = await (prisma.category as any).findMany({ orderBy: { type: 'asc' } })
+  const categories = await prisma.category.findMany({ orderBy: { type: 'asc' } })
 
   return (
     <div className="mx-auto max-w-3xl w-full py-6 px-2 space-y-6">

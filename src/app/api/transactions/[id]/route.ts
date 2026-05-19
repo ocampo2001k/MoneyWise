@@ -8,7 +8,7 @@ export async function GET(_: Request, { params }: Params) {
   if (!Number.isInteger(id)) {
     return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
   }
-  const tx = await (prisma.transaction as any).findUnique({ where: { id }, include: { category: true } })
+  const tx = await prisma.transaction.findUnique({ where: { id }, include: { category: true } })
   if (!tx) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json(tx)
 }
@@ -44,7 +44,7 @@ export async function PUT(request: Request, { params }: Params) {
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
     }
 
-    const updated = await (prisma.transaction as any).update({
+    const updated = await prisma.transaction.update({
       where: { id },
       data: {
         amountCents: amountCents ?? undefined,
