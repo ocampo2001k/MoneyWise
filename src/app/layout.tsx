@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const inter = Inter({
@@ -32,10 +33,10 @@ export default function RootLayout({
           <aside className="row-span-2 col-start-1 bg-[var(--color-surface)] border-r border-[var(--color-border)] p-4">
             <div className="h1 mb-6">💰 Moneywise</div>
             <nav className="space-y-2 text-sm">
-              <a className="block btn btn-secondary !w-full" href="/">Home</a>
-              <a className="block btn btn-secondary !w-full" href="/transactions">Transactions</a>
-              <a className="block btn btn-secondary !w-full" href="/analytics">Analytics</a>
-              <a className="block btn btn-secondary !w-full" href="/categories">Categories</a>
+              <Link className="block btn btn-secondary !w-full" href="/">Home</Link>
+              <Link className="block btn btn-secondary !w-full" href="/transactions">Transactions</Link>
+              <Link className="block btn btn-secondary !w-full" href="/analytics">Analytics</Link>
+              <Link className="block btn btn-secondary !w-full" href="/categories">Categories</Link>
             </nav>
           </aside>
           <header className="col-start-2 row-start-1 flex items-center justify-between px-6 border-b border-[var(--color-border)] bg-[var(--color-surface)]">

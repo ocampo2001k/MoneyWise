@@ -25,8 +25,8 @@ export default function CategoryForm() {
       setName('')
       setType('EXPENSE')
       window.location.reload()
-    } catch (e: any) {
-      setError(e.message ?? 'Unknown error')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unknown error')
     } finally {
       setLoading(false)
     }

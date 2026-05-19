@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-type Params = { params: { id: string } }
+type Params = { params: Promise<{ id: string }> }
 
 export async function PUT(request: Request, { params }: Params) {
-  const id = Number(params.id)
+  const { id: idParam } = await params
+  const id = Number(idParam)
   if (!Number.isInteger(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
   try {
     const body = await request.json()
@@ -20,7 +21,8 @@ export async function PUT(request: Request, { params }: Params) {
 }
 
 export async function DELETE(_: Request, { params }: Params) {
-  const id = Number(params.id)
+  const { id: idParam } = await params
+  const id = Number(idParam)
   if (!Number.isInteger(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
   try {
     await prisma.category.delete({ where: { id } })

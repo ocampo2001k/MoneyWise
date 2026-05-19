@@ -16,9 +16,17 @@ function formatAmountCents(amountCents: number): string {
   return formatCurrencyCents(amountCents)
 }
 
+type EditForm = {
+  amountCents: number
+  category: string
+  type: 'INCOME' | 'EXPENSE'
+  date: string
+  note: string
+}
+
 export default function TransactionsTable({ transactions }: { transactions: Transaction[] }) {
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [form, setForm] = useState<any>({})
+  const [form, setForm] = useState<EditForm | null>(null)
 
   const startEdit = (t: Transaction) => {
     setEditingId(t.id)
@@ -34,16 +42,18 @@ export default function TransactionsTable({ transactions }: { transactions: Tran
 
   const cancel = () => {
     setEditingId(null)
-    setForm({})
+    setForm(null)
   }
 
   const save = async (id: number) => {
-    const payload: any = {}
-    if (form.amountCents !== undefined) payload.amountCents = form.amountCents
-    if (form.category !== undefined) payload.category = form.category
-    if (form.type !== undefined) payload.type = form.type
-    if (form.date !== undefined) payload.date = new Date(form.date as string).toISOString()
-    if (form.note !== undefined) payload.note = form.note
+    if (!form) return
+    const payload = {
+      amountCents: form.amountCents,
+      category: form.category,
+      type: form.type,
+      date: new Date(form.date).toISOString(),
+      note: form.note,
+    }
 
     const res = await fetch(`/api/transactions/${id}`, {
       method: 'PUT',
@@ -84,16 +94,16 @@ export default function TransactionsTable({ transactions }: { transactions: Tran
             transactions.map((t) => (
               <tr key={t.id}>
                 <td>
-                  {editingId === t.id ? (
-                    <input className="input" type="date" value={String(form.date)} onChange={(e) => setForm((f: any) => ({ ...f, date: e.target.value }))} />
+                  {editingId === t.id && form ? (
+                    <input className="input" type="date" value={form.date} onChange={(e) => setForm((f) => f && { ...f, date: e.target.value })} />
                   ) : (
                     formatDateYYYYMMDD(t.date)
                   )}
                 </td>
                 <td>{t.category.name}</td>
                 <td>
-                  {editingId === t.id ? (
-                    <select className="input" value={String(form.type)} onChange={(e) => setForm((f: any) => ({ ...f, type: e.target.value as Transaction['type'] }))}>
+                  {editingId === t.id && form ? (
+                    <select className="input" value={form.type} onChange={(e) => setForm((f) => f && { ...f, type: e.target.value as Transaction['type'] })}>
                       <option value="INCOME">INCOME</option>
                       <option value="EXPENSE">EXPENSE</option>
                     </select>
@@ -102,15 +112,15 @@ export default function TransactionsTable({ transactions }: { transactions: Tran
                   )}
                 </td>
                 <td className="text-right font-medium">
-                  {editingId === t.id ? (
-                    <input className="input text-right" type="number" step="1" value={String(form.amountCents)} onChange={(e) => setForm((f: any) => ({ ...f, amountCents: Number(e.target.value) }))} />
+                  {editingId === t.id && form ? (
+                    <input className="input text-right" type="number" step="1" value={String(form.amountCents)} onChange={(e) => setForm((f) => f && { ...f, amountCents: Number(e.target.value) })} />
                   ) : (
                     formatAmountCents(t.amountCents)
                   )}
                 </td>
                 <td>
-                  {editingId === t.id ? (
-                    <input className="input" value={String(form.note ?? '')} onChange={(e) => setForm((f: any) => ({ ...f, note: e.target.value }))} />
+                  {editingId === t.id && form ? (
+                    <input className="input" value={form.note} onChange={(e) => setForm((f) => f && { ...f, note: e.target.value })} />
                   ) : (
                     t.note ?? ''
                   )}
