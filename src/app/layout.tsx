@@ -36,7 +36,7 @@ export default function RootLayout({
           <aside className="row-span-2 col-start-1 bg-[var(--color-surface)] border-r border-[var(--color-border)] p-4">
             <Link href="/" className="block mb-6" aria-label="moneywise home">
               <Image
-                src="/branding/logo.png"
+                src="/branding/logo-transparent.png"
                 alt="moneywise"
                 width={1380}
                 height={430}
