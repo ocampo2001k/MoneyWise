@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import HeaderSearch from "./ui/HeaderSearch";
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Moneywise",
+  title: "moneywise — financial tracker",
   description: "Personal finance tracker",
 };
 
@@ -33,7 +34,16 @@ export default function RootLayout({
       >
         <div className="min-h-screen grid grid-cols-[260px_1fr] grid-rows-[64px_1fr]" style={{background: 'var(--color-background)'}}>
           <aside className="row-span-2 col-start-1 bg-[var(--color-surface)] border-r border-[var(--color-border)] p-4">
-            <div className="h1 mb-6">💰 Moneywise</div>
+            <Link href="/" className="block mb-6" aria-label="moneywise home">
+              <Image
+                src="/branding/logo.png"
+                alt="moneywise"
+                width={1380}
+                height={430}
+                priority
+                className="w-full h-auto"
+              />
+            </Link>
             <nav className="space-y-2 text-sm">
               <Link className="block btn btn-secondary !w-full" href="/">Home</Link>
               <Link className="block btn btn-secondary !w-full" href="/transactions">Transactions</Link>
