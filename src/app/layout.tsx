@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { Suspense } from "react";
+import HeaderSearch from "./ui/HeaderSearch";
 import "./globals.css";
 
 const inter = Inter({
@@ -42,13 +44,9 @@ export default function RootLayout({
           <header className="col-start-2 row-start-1 flex items-center justify-between px-6 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
             <div className="text-lg font-medium">Dashboard</div>
             <div className="flex items-center gap-3">
-              <input className="input w-[260px]" placeholder="Search…" />
-              <select className="input w-[180px]">
-                <option>This month</option>
-                <option>Last 30 days</option>
-                <option>Last 90 days</option>
-                <option>Year to date</option>
-              </select>
+              <Suspense fallback={<input className="input w-[260px]" placeholder="Search transactions…" disabled />}>
+                <HeaderSearch />
+              </Suspense>
             </div>
           </header>
           <main className="col-start-2 row-start-2 p-6">

@@ -18,6 +18,7 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
   const type = typeof sp?.type === 'string' ? (sp.type as 'INCOME' | 'EXPENSE') : undefined
   const from = typeof sp?.from === 'string' ? new Date(sp.from) : undefined
   const to = typeof sp?.to === 'string' ? new Date(sp.to) : undefined
+  const q = typeof sp?.q === 'string' ? sp.q.trim() : ''
   const pageParam = typeof sp?.page === 'string' ? Number(sp.page) : 1
   const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
 
@@ -28,6 +29,12 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
     where.date = {}
     if (from) where.date.gte = from
     if (to) where.date.lte = to
+  }
+  if (q) {
+    where.OR = [
+      { note: { contains: q } },
+      { category: { name: { contains: q } } },
+    ]
   }
 
   const [totalCount, totalsByType] = await Promise.all([
@@ -61,6 +68,7 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
     if (type) params.set('type', type)
     if (typeof sp?.from === 'string' && sp.from) params.set('from', sp.from)
     if (typeof sp?.to === 'string' && sp.to) params.set('to', sp.to)
+    if (q) params.set('q', q)
     if (nextPage > 1) params.set('page', String(nextPage))
     const qs = params.toString()
     return qs ? `/transactions?${qs}` : '/transactions'
