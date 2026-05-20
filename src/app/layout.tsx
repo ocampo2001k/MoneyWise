@@ -4,7 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import HeaderSearch from "./ui/HeaderSearch";
+import ThemeToggle from "./ui/ThemeToggle";
 import "./globals.css";
+
+const themeInitScript = `try{var t=localStorage.getItem('moneywise-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}`;
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,7 +31,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body
         className={`${inter.variable} ${geistMono.variable} antialiased`}
       >
@@ -41,7 +47,15 @@ export default function RootLayout({
                 width={1380}
                 height={430}
                 priority
-                className="w-full h-auto"
+                className="w-full h-auto brand-logo-light"
+              />
+              <Image
+                src="/branding/logo-transparent-dark.png"
+                alt="moneywise"
+                width={1380}
+                height={430}
+                priority
+                className="w-full h-auto brand-logo-dark"
               />
             </Link>
             <nav className="space-y-2 text-sm">
@@ -57,6 +71,7 @@ export default function RootLayout({
               <Suspense fallback={<input className="input w-[260px]" placeholder="Search transactions…" disabled />}>
                 <HeaderSearch />
               </Suspense>
+              <ThemeToggle />
             </div>
           </header>
           <main className="col-start-2 row-start-2 p-6">
