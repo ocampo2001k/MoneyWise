@@ -30,6 +30,14 @@ export type TransactionUpdateInput = z.infer<typeof TransactionUpdateSchema>
 export type CategoryCreateInput = z.infer<typeof CategoryCreateSchema>
 export type CategoryUpdateInput = z.infer<typeof CategoryUpdateSchema>
 
+export const TransactionImportRowSchema = TransactionCreateSchema.extend({
+  externalId: z.string().min(1),
+})
+
+export const TransactionImportSchema = z.array(TransactionImportRowSchema).min(1).max(500)
+
+export type TransactionImportRow = z.infer<typeof TransactionImportRowSchema>
+
 export function formatZodError(error: z.ZodError) {
   return {
     error: 'Invalid payload',

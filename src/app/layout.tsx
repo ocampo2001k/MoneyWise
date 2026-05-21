@@ -63,6 +63,7 @@ export default function RootLayout({
               <Link className="block btn btn-secondary !w-full" href="/transactions">Transactions</Link>
               <Link className="block btn btn-secondary !w-full" href="/analytics">Analytics</Link>
               <Link className="block btn btn-secondary !w-full" href="/categories">Categories</Link>
+              <Link className="block btn btn-secondary !w-full" href="/import">Import CSV</Link>
             </nav>
           </aside>
           <header className="col-start-2 row-start-1 flex items-center justify-between px-6 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
