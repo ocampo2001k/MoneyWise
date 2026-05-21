@@ -22,7 +22,9 @@ export default function ThemeToggle() {
     document.documentElement.setAttribute('data-theme', next)
     try {
       localStorage.setItem('moneywise-theme', next)
-    } catch {}
+    } catch {
+      // localStorage may be blocked in private browsing or by storage quota; ignore
+    }
     setResolved(next)
   }
 

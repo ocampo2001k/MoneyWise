@@ -4,6 +4,8 @@ import { formatCurrencyCents } from '@/lib/format'
 import AnalyticsFilters from '@/app/analytics/ui/AnalyticsFilters'
 import DonutChart from '@/app/analytics/ui/DonutChart'
 
+export const dynamic = 'force-dynamic'
+
 type PageProps = { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 
 export default async function AnalyticsPage({ searchParams }: PageProps) {
