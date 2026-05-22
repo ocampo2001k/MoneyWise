@@ -54,12 +54,13 @@ export async function PUT(request: Request, { params }: Params) {
       data: {
         amountCents: parsed.data.amountCents,
         categoryId: parsed.data.categoryId,
+        accountId: parsed.data.accountId,
         type: parsed.data.type,
         date: parsed.data.date,
         note: parsed.data.note,
         externalId: parsed.data.externalId,
       },
-      include: { category: true },
+      include: { category: true, account: true },
     })
     return NextResponse.json(updated)
   } catch {

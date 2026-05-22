@@ -20,4 +20,7 @@ if ($LASTEXITCODE -ne 0) { Write-Host "Date fix failed" -ForegroundColor Red; ex
 node prisma/import-statement-may20-may21-2026.js
 if ($LASTEXITCODE -ne 0) { Write-Host "Import 3 failed" -ForegroundColor Red; exit 1 }
 
+node prisma/setup-accounts.js
+if ($LASTEXITCODE -ne 0) { Write-Host "Account setup failed" -ForegroundColor Red; exit 1 }
+
 Write-Host "Done! Database is ready." -ForegroundColor Green

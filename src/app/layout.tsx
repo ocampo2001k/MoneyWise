@@ -60,6 +60,7 @@ export default function RootLayout({
             </Link>
             <nav className="space-y-2 text-sm">
               <Link className="block btn btn-secondary !w-full" href="/">Home</Link>
+              <Link className="block btn btn-secondary !w-full" href="/accounts">Accounts</Link>
               <Link className="block btn btn-secondary !w-full" href="/transactions">Transactions</Link>
               <Link className="block btn btn-secondary !w-full" href="/analytics">Analytics</Link>
               <Link className="block btn btn-secondary !w-full" href="/categories">Categories</Link>
