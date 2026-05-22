@@ -46,6 +46,8 @@ out/
 .env
 .env.*
 prisma/dev.db
+prisma/*.db
+prisma/prisma/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
