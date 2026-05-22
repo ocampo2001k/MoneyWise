@@ -67,7 +67,8 @@ const TRANSACTIONS = [
   ['2026-05-08', 'Deposit Free Interac e-transfer',                    15.00,   'INCOME',  'E-Transfer Income'],
   ['2026-05-08', 'Withdrawal Free Interac e-transfer',                122.92,   'EXPENSE', 'Transfer Out'],
   ['2026-05-08', 'Deposit Free Interac e-transfer',                    17.25,   'INCOME',  'E-Transfer Income'],
-  ['2026-05-08', 'Opos Amzn Mktpl Ca 866-2',                           17.23,   'EXPENSE', 'Shopping'],
+  // ── May 11 ────────────────────────────────────────────────────────
+  ['2026-05-11', 'Opos Amzn Mktpl Ca 866-2',                           17.23,   'EXPENSE', 'Shopping'],
   // ── May 13 ────────────────────────────────────────────────────────
   ['2026-05-13', 'Customer Transfer Cr. Sceneplus Cash Credit',        30.00,   'INCOME',  'Refund'],
   ['2026-05-13', 'Withdrawal Free Interac e-transfer',                 30.00,   'EXPENSE', 'Transfer Out'],
