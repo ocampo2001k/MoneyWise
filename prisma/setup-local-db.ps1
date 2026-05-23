@@ -5,6 +5,9 @@ Write-Host "Setting up database..." -ForegroundColor Cyan
 npx prisma migrate deploy
 if ($LASTEXITCODE -ne 0) { Write-Host "Migration failed" -ForegroundColor Red; exit 1 }
 
+npx prisma generate
+if ($LASTEXITCODE -ne 0) { Write-Host "Prisma generate failed" -ForegroundColor Red; exit 1 }
+
 node prisma/seed.js
 if ($LASTEXITCODE -ne 0) { Write-Host "Seed failed" -ForegroundColor Red; exit 1 }
 
