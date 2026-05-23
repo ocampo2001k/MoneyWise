@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { formatCurrencyCents } from '@/lib/format'
 import Link from 'next/link'
+import AccountForm from './ui/AccountForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -54,6 +55,11 @@ export default async function AccountsPage() {
             {formatCurrencyCents(netWorth)}
           </p>
         </div>
+      </section>
+
+      <section className="card p-4">
+        <h2 className="h2 mb-3">Add account</h2>
+        <AccountForm />
       </section>
 
       <section className="space-y-3">
