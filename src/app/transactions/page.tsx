@@ -14,6 +14,7 @@ type PageProps = { searchParams: Promise<{ [key: string]: string | string[] | un
 
 export default async function TransactionsPage({ searchParams }: PageProps) {
   const sp = await searchParams
+  const accountIdParam = typeof sp?.accountId === 'string' ? sp.accountId : undefined
   const categoryIdParam = typeof sp?.categoryId === 'string' ? sp.categoryId : undefined
   const type = typeof sp?.type === 'string' ? (sp.type as 'INCOME' | 'EXPENSE') : undefined
   const from = typeof sp?.from === 'string' ? new Date(sp.from) : undefined
@@ -23,6 +24,7 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
   const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
 
   const where: Prisma.TransactionWhereInput = {}
+  if (accountIdParam) where.accountId = Number(accountIdParam)
   if (categoryIdParam) where.categoryId = Number(categoryIdParam)
   if (type) where.type = type
   if (from || to) {
@@ -55,7 +57,7 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
   const transactions = await prisma.transaction.findMany({
     where,
     orderBy: { date: 'desc' },
-    include: { category: true },
+    include: { category: true, account: true },
     skip: (currentPage - 1) * PAGE_SIZE,
     take: PAGE_SIZE,
   })
@@ -64,6 +66,7 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
 
   const buildHref = (nextPage: number) => {
     const params = new URLSearchParams()
+    if (accountIdParam) params.set('accountId', accountIdParam)
     if (categoryIdParam) params.set('categoryId', categoryIdParam)
     if (type) params.set('type', type)
     if (typeof sp?.from === 'string' && sp.from) params.set('from', sp.from)

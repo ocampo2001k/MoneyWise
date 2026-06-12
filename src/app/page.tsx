@@ -2,6 +2,13 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatCurrencyCents, formatDateYYYYMMDD } from '@/lib/format'
 
+function accountTypeLabel(type: string) {
+  if (type === 'CHEQUING') return 'Chequing'
+  if (type === 'SAVINGS') return 'Savings'
+  if (type === 'CREDIT_CARD') return 'Credit Card'
+  return type
+}
+
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
@@ -9,7 +16,7 @@ export default async function DashboardPage() {
   const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
   const nextMonthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1))
 
-  const [monthTransactions, recent] = await Promise.all([
+  const [monthTransactions, recent, accounts] = await Promise.all([
     prisma.transaction.findMany({
       where: { date: { gte: monthStart, lt: nextMonthStart } },
       include: { category: true },
@@ -17,9 +24,20 @@ export default async function DashboardPage() {
     prisma.transaction.findMany({
       orderBy: { date: 'desc' },
       take: 5,
-      include: { category: true },
+      include: { category: true, account: true },
+    }),
+    prisma.account.findMany({
+      orderBy: { createdAt: 'asc' },
+      include: { transactions: { select: { amountCents: true, type: true } } },
     }),
   ])
+
+  const accountsWithBalance = accounts.map((acc) => {
+    const income = acc.transactions.filter((t) => t.type === 'INCOME').reduce((s, t) => s + t.amountCents, 0)
+    const expense = acc.transactions.filter((t) => t.type === 'EXPENSE').reduce((s, t) => s + t.amountCents, 0)
+    const balanceCents = acc.type === 'CREDIT_CARD' ? expense - income : income - expense
+    return { id: acc.id, name: acc.name, type: acc.type, balanceCents }
+  })
 
   const totals = monthTransactions.reduce(
     (acc, t) => {
@@ -63,6 +81,29 @@ export default async function DashboardPage() {
         <div className="card p-4">
           <p className="text-muted text-sm">Net balance</p>
           <p className="h2 mt-1" style={{ color: net >= 0 ? 'var(--color-success)' : 'var(--color-error)' }}>{formatCurrencyCents(net)}</p>
+        </div>
+      </section>
+
+      <section>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="h2">Account balances</h2>
+          <Link className="text-sm" href="/accounts" style={{ color: 'var(--color-primary)' }}>Manage →</Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {accountsWithBalance.map((acc) => {
+            const isCreditCard = acc.type === 'CREDIT_CARD'
+            const color = isCreditCard
+              ? acc.balanceCents > 0 ? 'var(--color-error)' : 'var(--color-success)'
+              : acc.balanceCents >= 0 ? 'var(--color-success)' : 'var(--color-error)'
+            return (
+              <div key={acc.id} className="card p-4">
+                <p className="text-muted text-sm">{accountTypeLabel(acc.type)}</p>
+                <p className="font-medium text-xs mb-1">{acc.name}</p>
+                <p className="h2" style={{ color }}>{formatCurrencyCents(acc.balanceCents)}</p>
+                {isCreditCard && <p className="text-muted text-xs mt-0.5">owed</p>}
+              </div>
+            )
+          })}
         </div>
       </section>
 

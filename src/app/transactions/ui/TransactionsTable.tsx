@@ -7,6 +7,7 @@ type Transaction = {
   id: number
   amountCents: number
   category: { id: number; name: string; type: 'INCOME' | 'EXPENSE' }
+  account: { id: number; name: string } | null
   type: 'INCOME' | 'EXPENSE'
   date: string | Date
   note: string | null
@@ -78,6 +79,7 @@ export default function TransactionsTable({ transactions }: { transactions: Tran
         <thead className="text-left">
           <tr>
             <th className="font-medium">Date</th>
+            <th className="font-medium">Account</th>
             <th className="font-medium">Category</th>
             <th className="font-medium">Type</th>
             <th className="font-medium text-right">Amount</th>
@@ -88,7 +90,7 @@ export default function TransactionsTable({ transactions }: { transactions: Tran
         <tbody>
           {transactions.length === 0 ? (
             <tr>
-              <td className="py-6 text-center text-muted" colSpan={6}>No transactions yet.</td>
+              <td className="py-6 text-center text-muted" colSpan={7}>No transactions yet.</td>
             </tr>
           ) : (
             transactions.map((t) => (
@@ -100,6 +102,7 @@ export default function TransactionsTable({ transactions }: { transactions: Tran
                     formatDateYYYYMMDD(t.date)
                   )}
                 </td>
+                <td className="text-muted text-xs">{t.account?.name ?? '—'}</td>
                 <td>{t.category.name}</td>
                 <td>
                   {editingId === t.id && form ? (

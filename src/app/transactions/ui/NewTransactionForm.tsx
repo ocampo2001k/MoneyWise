@@ -4,15 +4,17 @@ import { useEffect, useState } from 'react'
 import { formatDateYYYYMMDD } from '@/lib/format'
 
 type TransactionType = 'INCOME' | 'EXPENSE'
+type Account = { id: number; name: string; type: string }
 
 export default function NewTransactionForm() {
   const [amount, setAmount] = useState<string>('')
   const [categoryId, setCategoryId] = useState<number | ''>('')
   const [categories, setCategories] = useState<Array<{ id: number; name: string; type: 'INCOME' | 'EXPENSE' }>>([])
+  const [accounts, setAccounts] = useState<Account[]>([])
+  const [accountId, setAccountId] = useState<number | ''>('')
   const [type, setType] = useState<TransactionType>('EXPENSE')
   const [date, setDate] = useState<string>('')
   useEffect(() => {
-    // Set default date on client only to avoid SSR hydration mismatch
     setDate(formatDateYYYYMMDD(new Date()))
   }, [])
 
@@ -40,6 +42,7 @@ export default function NewTransactionForm() {
         body: JSON.stringify({
           amountCents,
           categoryId: categoryId === '' ? undefined : Number(categoryId),
+          accountId: accountId === '' ? undefined : Number(accountId),
           type,
           date: isoDate,
           note: note.trim() === '' ? null : note,
@@ -58,7 +61,6 @@ export default function NewTransactionForm() {
       setDate(new Date().toISOString().slice(0, 10))
       setNote('')
 
-      // Simple refresh to show new data
       if (typeof window !== 'undefined') {
         window.location.reload()
       }
@@ -72,18 +74,24 @@ export default function NewTransactionForm() {
 
   useEffect(() => {
     ;(async () => {
-      const res = await fetch('/api/categories')
-      if (res.ok) {
-        const data = await res.json()
-        setCategories(data)
+      const [catRes, accRes] = await Promise.all([
+        fetch('/api/categories'),
+        fetch('/api/accounts'),
+      ])
+      if (catRes.ok) setCategories(await catRes.json())
+      if (accRes.ok) {
+        const accs: Account[] = await accRes.json()
+        setAccounts(accs)
+        const chequing = accs.find((a) => a.type === 'CHEQUING')
+        if (chequing) setAccountId(chequing.id)
       }
     })()
   }, [])
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
       <div>
-        <label className="block text-xs font-medium mb-1">Amount (USD)</label>
+        <label className="block text-xs font-medium mb-1">Amount (CAD)</label>
         <input
           type="number"
           step="0.01"
@@ -94,6 +102,16 @@ export default function NewTransactionForm() {
           placeholder="0.00"
           required
         />
+      </div>
+
+      <div>
+        <label className="block text-xs font-medium mb-1">Account</label>
+        <select className="input" value={String(accountId)} onChange={(e) => setAccountId(e.target.value === '' ? '' : Number(e.target.value))}>
+          <option value="">Any</option>
+          {accounts.map((a) => (
+            <option key={a.id} value={a.id}>{a.name}</option>
+          ))}
+        </select>
       </div>
 
       <div>
@@ -129,7 +147,7 @@ export default function NewTransactionForm() {
         />
       </div>
 
-      <div className="md:col-span-5">
+      <div className="md:col-span-6">
         <label className="block text-xs font-medium mb-1">Note</label>
         <div className="flex gap-2">
           <input
@@ -153,5 +171,3 @@ export default function NewTransactionForm() {
     </form>
   )
 }
-
-
